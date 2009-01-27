@@ -85,8 +85,18 @@ module Prawn
       #  >> Prawn::Graphics::Color.hex2rgb("ff7808")
       #  => [255, 120, 8]
       #
+      #  >> Prawn::Graphics::Color.hex2rgb("f70")
+      #  => [255, 119, 0]
+      #
       def hex2rgb(hex)
-        r,g,b = hex[0..1], hex[2..3], hex[4..5]
+        r,g,b = case(hex.length)
+        when 6
+          [hex[0..1], hex[2..3], hex[4..5]]
+        when 3
+          [hex[0,1] * 2, hex[1,1] * 2, hex[2,1] * 2]
+        else
+          raise ArgumentError, 'wrong color format, must be either rrggbb or rgb'
+        end
         [r,g,b].map { |e| e.to_i(16) }
       end 
       
