@@ -161,6 +161,13 @@ describe "When setting colors" do
     colors.stroke_color.should == [1.0, 0.8, 0.8]
   end
 
+  it "should set stroke colors in short format" do
+    @pdf.stroke_color "fcc"
+    colors = PDF::Inspector::Graphics::Color.analyze(@pdf.render)
+    # 100% red, 80% green, 80% blue
+    colors.stroke_color.should == [1.0, 0.8, 0.8]
+  end
+
   it "should set fill colors" do
     @pdf.fill_color "ccff00"
     colors = PDF::Inspector::Graphics::Color.analyze(@pdf.render)
@@ -212,6 +219,22 @@ describe "When using painting shortcuts" do
   it "should not break method_missing" do
     lambda { @pdf.i_have_a_pretty_girlfriend_named_jia }.
       should.raise(NoMethodError)
+  end
+end
+
+describe "When converting colors" do
+  it "should accept six hexadecimal digits" do
+    Prawn::Graphics::Color.hex2rgb("0077ff").should == [0, 119, 255]
+  end
+
+  it "should accept three hexadecimal digits" do
+    Prawn::Graphics::Color.hex2rgb("f70").should == [255, 119, 0]
+  end
+
+  it "should raise argument error for other number of digits" do
+    lambda {
+      Prawn::Graphics::Color.hex2rgb("07")
+    }.should.raise(ArgumentError)
   end
 end
 
